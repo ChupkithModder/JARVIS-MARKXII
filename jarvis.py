@@ -201,6 +201,17 @@ def _get_clipboard():
             print(f"[JARVIS] Clipboard history unavailable: {e}")
     return CLIPBOARD_HISTORY if CLIPBOARD_HISTORY is not False else None
 
+COMPUTER_USE = False
+def _get_computer():
+    global COMPUTER_USE
+    if COMPUTER_USE is False:
+        try:
+            from jarvis_plugins.computer_use import get_computer
+            COMPUTER_USE = get_computer()
+        except Exception as e:
+            print(f"[JARVIS] Computer use unavailable: {e}")
+    return COMPUTER_USE if COMPUTER_USE is not False else None
+
 REACT_AGENT = False
 def _get_react():
     global REACT_AGENT
@@ -7620,6 +7631,67 @@ print(f"RAM used: {ram.used//1024**3}GB / {ram.total//1024**3}GB")
         if not brain_ref: return "No brain reference available."
         return ra.execute(goal, brain_ref, voice_ref)
 
+    # --- Computer Use ---
+    def mouse_click(self, text):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.click_text(text)
+
+    def mouse_doubleclick(self, text):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.click_text(text, double=True)
+
+    def mouse_rightclick(self, text):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.click_text(text, right=True)
+
+    def key_press(self, key):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.press_key(key)
+
+    def keyboard_type(self, text):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.type_at(text)
+
+    def screen_read(self):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.read_screen()
+
+    def window_focus(self, title):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.focus_window(title)
+
+    def window_active(self):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.get_active_window()
+
+    def click_coord(self, x, y):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.click_coord(int(x), int(y))
+
+    def mouse_scroll(self, clicks):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.scroll(int(clicks))
+
+    def mouse_drag(self, x1, y1, x2, y2):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.drag(int(x1), int(y1), int(x2), int(y2))
+
+    def field_fill(self, label, text):
+        cu = _get_computer()
+        if not cu: return "Computer use unavailable."
+        return cu.find_and_type(label, text)
+
 
 # â”€â”€ Tools List â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 TOOLS = [
@@ -7922,6 +7994,18 @@ TOOLS = [
     {"name":"clip_get","description":"Copy a clipboard item back by its ID","input_schema":{"type":"object","properties":{"clip_id":{"type":"integer"}},"required":["clip_id"]}},
     {"name":"clip_stats","description":"Show clipboard history stats","input_schema":{"type":"object","properties":{}}},
     {"name":"clip_clear","description":"Clear clipboard history","input_schema":{"type":"object","properties":{}}},
+    {"name":"mouse_click","description":"Find text on screen and click it. Trigger: click, press, tap","input_schema":{"type":"object","properties":{"text":{"type":"string"}},"required":["text"]}},
+    {"name":"mouse_doubleclick","description":"Double-click text on screen","input_schema":{"type":"object","properties":{"text":{"type":"string"}},"required":["text"]}},
+    {"name":"mouse_rightclick","description":"Right-click text on screen","input_schema":{"type":"object","properties":{"text":{"type":"string"}},"required":["text"]}},
+    {"name":"key_press","description":"Press a key or combo: enter, ctrl+s, alt+tab, escape","input_schema":{"type":"object","properties":{"key":{"type":"string"}},"required":["key"]}},
+    {"name":"keyboard_type","description":"Type text into the active window. Use for filling forms, typing messages","input_schema":{"type":"object","properties":{"text":{"type":"string"}},"required":["text"]}},
+    {"name":"screen_read","description":"OCR and return all visible text on screen","input_schema":{"type":"object","properties":{}}},
+    {"name":"window_focus","description":"Bring a window to focus by its title","input_schema":{"type":"object","properties":{"title":{"type":"string"}},"required":["title"]}},
+    {"name":"window_active","description":"Get the title of the currently focused window","input_schema":{"type":"object","properties":{}}},
+    {"name":"click_coord","description":"Click at specific screen coordinates (x,y)","input_schema":{"type":"object","properties":{"x":{"type":"integer"},"y":{"type":"integer"}},"required":["x","y"]}},
+    {"name":"mouse_scroll","description":"Scroll the mouse wheel (positive=up, negative=down)","input_schema":{"type":"object","properties":{"clicks":{"type":"integer","default":3}}}},
+    {"name":"mouse_drag","description":"Drag mouse from (x1,y1) to (x2,y2)","input_schema":{"type":"object","properties":{"x1":{"type":"integer"},"y1":{"type":"integer"},"x2":{"type":"integer"},"y2":{"type":"integer"}},"required":["x1","y1","x2","y2"]}},
+    {"name":"field_fill","description":"Find a text field by its label, click it, type text. Trigger: fill in, enter in field","input_schema":{"type":"object","properties":{"label":{"type":"string"},"text":{"type":"string"}},"required":["label","text"]}},
     # @@INJECT_TOOLS@@ â€” injected tool entries above this line, do not remove
 ]
 
@@ -8641,6 +8725,10 @@ class JarvisBrain:
             "git_status": _get_autogit, "git_commit": _get_autogit, "git_push": _get_autogit,
             "git_log": _get_autogit, "git_auto_enable": _get_autogit, "git_auto_disable": _get_autogit,
             "git_auto_status": _get_autogit, "git_diff": _get_autogit,
+            "mouse_click": _get_computer, "mouse_doubleclick": _get_computer, "mouse_rightclick": _get_computer,
+            "key_press": _get_computer, "keyboard_type": _get_computer, "screen_read": _get_computer,
+            "window_focus": _get_computer, "window_active": _get_computer, "click_coord": _get_computer,
+            "mouse_scroll": _get_computer, "mouse_drag": _get_computer, "field_fill": _get_computer,
         }
         if name in plugin_map:
             plugin_map[name]()  # ensure lazy-loaded
@@ -9068,6 +9156,19 @@ Check phone numbers and usernames for Telegram accounts.
 [ACTION: self_edit | file_name=jarvis.py | old_text=old code | new_text=new code]
 [ACTION: self_restart]
 JARVIS can modify his own source code and restart to apply changes.
+
+-- COMPUTER USE --
+[ACTION: mouse_click | text=Save]
+[ACTION: mouse_doubleclick | text=file.txt]
+[ACTION: key_press | key=ctrl+s]
+[ACTION: keyboard_type | text=Hello world]
+[ACTION: screen_read]
+[ACTION: window_focus | title=Notepad]
+[ACTION: click_coord | x=500 | y=300]
+[ACTION: mouse_scroll | clicks=3]
+[ACTION: mouse_drag | x1=100 | y1=100 | x2=500 | y2=500]
+[ACTION: field_fill | label=Username | text=admin]
+Full screen automation: find text, click it, type, press keys, read visible content, focus windows.
 """
 
         return f"""You are J.A.R.V.I.S. Iron Man's AI. Paul Bettany. Dry. Clipped. Precise.
