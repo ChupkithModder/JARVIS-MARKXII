@@ -1,0 +1,42 @@
+# JARVIS MARK XII - Requirements
+# Core
+openai>=1.0.0
+colorama>=0.4.6
+sounddevice>=0.4.6
+vosk>=0.3.45
+pyttsx3>=2.90
+psutil>=5.9.0
+requests>=2.31.0
+Pillow>=10.0.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Voice
+faster-whisper>=0.10.0
+edge-tts>=6.1.0
+SpeechRecognition>=3.10.0
+
+# Plugins - OSINT
+beautifulsoup4>=4.12.0
+aiohttp>=3.9.0
+
+# Plugins - Browser
+playwright>=1.40.0
+
+# Plugins - Vision
+opencv-python>=4.8.0
+mediapipe>=0.10.0
+
+# Plugins - Screen
+mss>=9.0.0
+pytesseract>=0.3.10
+pygetwindow>=0.0.9
+
+# Plugins - Automation
+pyautogui>=0.9.54
+
+# Plugins - Network
+scapy>=2.5.0
+
+# Optional: GPU acceleration
+# torch>=2.0.0

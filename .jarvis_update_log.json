@@ -1,0 +1,15 @@
+[
+  {
+    "version": "12.0.0",
+    "label": "JARVIS MK 12",
+    "date": "2026-06-13",
+    "changes": [
+      "Persistent episode memory and semantic recall improvements",
+      "Calendar follow-up reasoning now answers why a day is off",
+      "Follow-up question context update for school calendar queries",
+      "Threat-removal intent executes Defender remediation flow",
+      "HUD upgraded with MK12 status and update brief panel",
+      "Project framework mode with roadmap, task board, checkpoints, and build status"
+    ]
+  }
+]

@@ -1,0 +1,27 @@
+# JARVIS MARK XV
+# Runtime data
+.jarvis_*
+jarvis_surveillance/
+
+# Python cache
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Temp & backup
+*.bak
+*.tmp
+*.crash
+jarvis_*.png
+jarvis_*.mp3
+
+# Credentials
+*.json
+!requirements.txt
+!.jarvis_projects.json
+!.jarvis_update_log.json
+
+# Large files
+*.mp4 *.mkv *.avi
+*.blend* *.aep *.zip
+*.jpg *.png *.gif *.pdf
